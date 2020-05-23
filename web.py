@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
+from tkinter.messagebox import *
 import webbrowser
 import os
 
@@ -12,12 +13,11 @@ class App(object):
 
     def __init__(self):
 
-
-
-
         self.root = tk.Tk()
-        self.root.title("Autostart Browser Windows")
-        self.root.resizable(True, True)
+        self.root.title("Start Browser Windows")
+        self.root.resizable(False, False)
+        self.root.iconbitmap('./assets/open_in_browser-24px.ico')
+        itemactive = False
         frame = ttk.Frame(self.root)
         frame.pack(expand=False, fill='both')
         # Scrollbar
@@ -25,7 +25,7 @@ class App(object):
         scrollbar.grid(row=1, column=2, sticky="nse")
         # Listbox
         urllist = tk.Listbox(
-            frame, yscrollcommand=scrollbar.set, width=90, height=20)
+            frame, selectmode=MULTIPLE, yscrollcommand=scrollbar.set, width=90, height=20)
         urllist.grid(pady=10, padx=10)
         # Entry
         urlinput = ttk.Entry(frame, width=50)
@@ -33,10 +33,22 @@ class App(object):
         # Pack
         urllist.grid(row=1, column=1)
         scrollbar.config(command=urllist.yview)
-        # Button
-        urlbutton = ttk.Button(
+        # Add Button
+        addbutton = ttk.Button(
             frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist))
-        urlbutton.grid(row=0, column=1, sticky='ne', pady=10, padx=20)
+        addbutton.grid(row=0, column=1, sticky='ne', pady=10, padx=20)
+        # Start Button
+        startbuttoon = ttk.Button(
+            frame, text='Start', command=lambda: self.starturl())
+        startbuttoon.grid(row=2, column=1, sticky='ne', pady=10, padx=20)
+        # Clear Button
+        startbuttoon = ttk.Button(
+            frame, text='Clear', command=lambda: self.clearlist(urllist))
+        startbuttoon.grid(row=2, column=0, sticky='ne', pady=10, padx=20)
+        # Delete Button
+        deleteButton = ttk.Button(
+            frame, text='Delete',command=lambda: self.deleteurl(urllist))
+        deleteButton.grid(row=0, column=0, sticky='ne', pady=10, padx=20)
 
         if os.path.isfile('urls.txt'):
             with open('urls.txt', 'r') as f:
@@ -45,7 +57,7 @@ class App(object):
                 apps = [x for x in tempApps if x.strip()]
                 self.urls.clear()
                 for app in apps:
-                    self.urls.insert(0,app)
+                    self.urls.insert(0, app)
                     urllist.insert(END, app)
                     urlinput.delete(0, END)
 
@@ -57,11 +69,27 @@ class App(object):
                     file.write(url + ',')
             self.urls.insert(0, entry.get())
             print(self.urls)
-            # Show URL
+            # Open URL
             for url in self.urls:
                 listbox.insert(END, url)
                 entry.delete(0, END)
-                break;
+                break
+
+    def starturl(self):
+        for url in self.urls:
+            webbrowser.open(url)
+
+    def clearlist(self, listbox):
+        if tk.messagebox.askyesno(title="Delete All?", default=NO, icon=WARNING, message="Do you want to delete all URLs from the list?",):
+            # Clear List
+            listbox.delete(0, END)
+            self.urls.clear()
+            open('urls.txt', 'w').close()
+    def deleteurl(self,listbox):
+        for url in listbox.curselection():
+            listbox.delete(url)
+            self.urls.pop(url)
+            print(url)
 
 
 app = App()
