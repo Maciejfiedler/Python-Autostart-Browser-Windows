@@ -15,7 +15,6 @@ class App(object):
         self.root = tk.Tk()
         self.root.title("Start Browser Windows")
         self.root.resizable(False, False)
-        self.root.iconbitmap('./assets/open_in_browser-24px.ico')
         itemselected = IntVar()
         itemselected.set(1)
         frame = ttk.Frame(self.root)
