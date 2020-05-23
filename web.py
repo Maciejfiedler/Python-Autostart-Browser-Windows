@@ -10,7 +10,6 @@ import os
 class App(object):
 
     urls = []
-    
 
     def __init__(self):
         self.root = tk.Tk()
@@ -18,6 +17,7 @@ class App(object):
         self.root.resizable(False, False)
         self.root.iconbitmap('./assets/open_in_browser-24px.ico')
         itemselected = IntVar()
+        itemselected.set(1)
         frame = ttk.Frame(self.root)
         frame.pack(expand=False, fill='both')
         # Scrollbar
@@ -31,15 +31,15 @@ class App(object):
         urlinput = ttk.Entry(frame, width=50)
         urlinput.grid(row=0, column=1, sticky='n', pady=10)
         # Checkbox
-        cleartextcheckbox = ttk.Checkbutton(frame, text = "Clear Text", variable = itemselected,command = lambda:  print(itemselected.get()))
-       
-        cleartextcheckbox.grid(row=0, column=1, sticky='nw', pady=10, padx = 50)
+        cleartextcheckbox = ttk.Checkbutton(
+            frame, text="Clear Text", variable=itemselected, command=lambda: print(itemselected.get()))
+        cleartextcheckbox.grid(row=0, column=1, sticky='nw', pady=10, padx=50)
         # Pack
         urllist.grid(row=1, column=1)
         scrollbar.config(command=urllist.yview)
         # Add Button
         addbutton = ttk.Button(
-            frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist,itemselected))
+            frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist, itemselected))
         addbutton.grid(row=0, column=1, sticky='ne', pady=10, padx=20)
         # Start Button
         startbuttoon = ttk.Button(
@@ -51,7 +51,7 @@ class App(object):
         startbuttoon.grid(row=2, column=0, sticky='ne', pady=10, padx=20)
         # Delete Button
         deleteButton = ttk.Button(
-            frame, text='Delete',command=lambda: self.deleteurl(urllist))
+            frame, text='Delete', command=lambda: self.deleteurl(urllist))
         deleteButton.grid(row=0, column=0, sticky='ne', pady=10, padx=20)
 
         if os.path.isfile('urls.txt'):
@@ -65,21 +65,21 @@ class App(object):
                     urllist.insert(END, app)
                     urlinput.delete(0, END)
 
-    def addurl(self, entry, frame, scrollbar, listbox,itemselected):
+    def addurl(self, entry, frame, scrollbar, listbox, itemselected):
         if entry.get().strip():
             # Add URL
+            self.urls.insert(0, entry.get())
             with open('urls.txt', 'w') as file:
                 for url in self.urls:
                     file.write(url + ',')
-            self.urls.insert(0, entry.get())
+            
             print(self.urls)
             # Open URL
             for url in self.urls:
                 listbox.insert(END, url)
-                if  itemselected.get() == 1:
-                    print("1")
+                if itemselected.get() == 1:
                     entry.delete(0, END)
-                
+
                 break
 
     def starturl(self):
@@ -92,7 +92,8 @@ class App(object):
             listbox.delete(0, END)
             self.urls.clear()
             open('urls.txt', 'w').close()
-    def deleteurl(self,listbox):
+
+    def deleteurl(self, listbox):
         for url in listbox.curselection():
             listbox.delete(url)
             self.urls.pop(url)
@@ -101,4 +102,3 @@ class App(object):
 
 app = App()
 app.root.mainloop()
-
