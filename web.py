@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
 import webbrowser
+import os
 
 
 class App(object):
@@ -10,6 +11,10 @@ class App(object):
     urls = []
 
     def __init__(self):
+
+
+
+
         self.root = tk.Tk()
         self.root.title("Autostart Browser Windows")
         self.root.resizable(True, True)
@@ -33,14 +38,30 @@ class App(object):
             frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist))
         urlbutton.grid(row=0, column=1, sticky='ne', pady=10, padx=20)
 
+        if os.path.isfile('urls.txt'):
+            with open('urls.txt', 'r') as f:
+                tempApps = f.read()
+                tempApps = tempApps.split(',')
+                apps = [x for x in tempApps if x.strip()]
+                self.urls.clear()
+                for app in apps:
+                    self.urls.insert(0,app)
+                    urllist.insert(END, app)
+                    urlinput.delete(0, END)
+
     def addurl(self, entry, frame, scrollbar, listbox):
-        # Add URL
-        self.urls.insert(0, entry.get())
-        print(self.urls)
-        # Show URL
-        for url in self.urls:
-            listbox.insert(END, url)
-            entry.delete(0, END)
+        if entry.get().strip():
+            # Add URL
+            with open('urls.txt', 'w') as file:
+                for url in self.urls:
+                    file.write(url + ',')
+            self.urls.insert(0, entry.get())
+            print(self.urls)
+            # Show URL
+            for url in self.urls:
+                listbox.insert(END, url)
+                entry.delete(0, END)
+                break;
 
 
 app = App()
