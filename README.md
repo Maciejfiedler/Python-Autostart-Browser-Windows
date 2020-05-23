@@ -1,2 +1,3 @@
 # Python-Autostart-Browser-Windows
-Just add a URL and press Start
+A Python Tkinter program that starts multiple browser windows by a button click.
+
