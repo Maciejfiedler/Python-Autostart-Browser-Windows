@@ -1,2 +1,2 @@
 # Python-Autostart-Browser-Windows
-Working on it
+Just add a URL and press Start
