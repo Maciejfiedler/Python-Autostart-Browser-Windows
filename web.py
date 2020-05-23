@@ -10,14 +10,14 @@ import os
 class App(object):
 
     urls = []
+    
 
     def __init__(self):
-
         self.root = tk.Tk()
         self.root.title("Start Browser Windows")
         self.root.resizable(False, False)
         self.root.iconbitmap('./assets/open_in_browser-24px.ico')
-        itemactive = False
+        itemselected = IntVar()
         frame = ttk.Frame(self.root)
         frame.pack(expand=False, fill='both')
         # Scrollbar
@@ -30,12 +30,16 @@ class App(object):
         # Entry
         urlinput = ttk.Entry(frame, width=50)
         urlinput.grid(row=0, column=1, sticky='n', pady=10)
+        # Checkbox
+        cleartextcheckbox = ttk.Checkbutton(frame, text = "Clear Text", variable = itemselected,command = lambda:  print(itemselected.get()))
+       
+        cleartextcheckbox.grid(row=0, column=1, sticky='nw', pady=10, padx = 50)
         # Pack
         urllist.grid(row=1, column=1)
         scrollbar.config(command=urllist.yview)
         # Add Button
         addbutton = ttk.Button(
-            frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist))
+            frame, text='Add', command=lambda: self.addurl(urlinput, frame, scrollbar, urllist,itemselected))
         addbutton.grid(row=0, column=1, sticky='ne', pady=10, padx=20)
         # Start Button
         startbuttoon = ttk.Button(
@@ -61,7 +65,7 @@ class App(object):
                     urllist.insert(END, app)
                     urlinput.delete(0, END)
 
-    def addurl(self, entry, frame, scrollbar, listbox):
+    def addurl(self, entry, frame, scrollbar, listbox,itemselected):
         if entry.get().strip():
             # Add URL
             with open('urls.txt', 'w') as file:
@@ -72,7 +76,10 @@ class App(object):
             # Open URL
             for url in self.urls:
                 listbox.insert(END, url)
-                entry.delete(0, END)
+                if  itemselected.get() == 1:
+                    print("1")
+                    entry.delete(0, END)
+                
                 break
 
     def starturl(self):
@@ -94,3 +101,4 @@ class App(object):
 
 app = App()
 app.root.mainloop()
+
